@@ -10,10 +10,8 @@ import Clocks from './components/Clocks';
 
 const App = () => {
   return (
-    <div>
       <Clocks />
-    </div>
-  );
+    );
 };
 
 export default App;
