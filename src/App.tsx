@@ -1,19 +1,21 @@
-// import Clocks from "./components/Clocks";
+import  Clocks  from "./components/Clocks"
+import Input from "./components/common/Input";
+import InputResult from "./model/InputResult";
 
-// export const App: React.FC = () => {
-//  return <Clocks/>
-// } 
-// export default App;
 
-import React from 'react';
-import Clocks from './components/Clocks';
 
-const App = () => {
+const App: React.FC = () => {
   return (
-    <div>
       <Clocks />
-    </div>
-  );
+    );
 };
 
+
+
+//  const App: React.FC = () =>
+//   {
+//   return <Input submitFn={function (inputText: string): InputResult {
+//     console.log(inputText); return {status:'success',message:inputText}
+//   } } type="text" placeholder={"enter"} buttonTitle="kodima"/>
+// }
 export default App;

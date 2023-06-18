@@ -1,88 +1,65 @@
 
-import React, { CSSProperties, useEffect, useState } from 'react';
-import { timeZones } from './time-zones';
+import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { timeZones } from '../config/time-zones';
+import Input from './common/Input';
+import InputResult from '../model/InputResult';
+import Alert from './common/Alert';
+
 
 type Props = {
-    time: string
+    time: Date;
+    cityCountry: string;
+   
 };
 
-type TimeZone = {
-    name: string;
-    countryName: string;
-    mainCities: string[];
-   
-} 
+const style: CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: 'center'
+};
 
-export const Clock: React.FunctionComponent<Props> = ({time}) => {
-    const style: CSSProperties = {display: "flex", flexDirection: "column", alignItems: "center"}
-    const [selectedCity, setSelectedCity] = useState<string>('');
-    const [selectedTimeZone, setSelectedTimeZone] = useState<TimeZone | null>(null);
-    const [currentTime, setCurrentTime] = useState<string>('');
-   
-    const changeTimeZone = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedCity = event.target.value;
-        const selectedTimeZone = timeZones.find((zone) => zone.mainCities.includes(selectedCity)) || null;
-        setSelectedCity(selectedCity);
-        setSelectedTimeZone(selectedTimeZone);
-    };
- 
-
-    useEffect(() => {
-        
-        const interval = setInterval(() => {
-            if (selectedTimeZone) {
-              const currentDateTime = new Date();
-              const formatter = new Intl.DateTimeFormat("en-GB", {
-                timeZone: selectedTimeZone.name,
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-               
-              });
-              const formattedTime = formatter.format(currentDateTime);
-              setCurrentTime(formattedTime);
-            }
-          }, 1000);
-
-        return () => {
-            clearInterval(interval);
-          };
-        }, [selectedTimeZone]);
-
-        const groupedTimeZones: { [country: string]: string[] } = {};
-
-        timeZones.forEach((tZone) => {
-          const { countryName, mainCities } = tZone;
-          if (groupedTimeZones[countryName]) {
-            groupedTimeZones[countryName].push(...mainCities);
-          } else {
-            groupedTimeZones[countryName] = [...mainCities];
-          }
-        });
-
-        const sortedCountries = Object.keys(groupedTimeZones).sort();
-
-    return (
-        <div style={style}>
-            <header>
-             {selectedTimeZone ? "Time in " + selectedCity + ", " + selectedTimeZone.countryName : 'Сhoose the city of the country'}
-          </header>
-          <select value={selectedCity} onChange={changeTimeZone}>
-            <option value="">--select city-</option>
-        {sortedCountries.map((country) => (
-                <optgroup key={country} label={country}>
-                {groupedTimeZones[country].map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
-          <p>{currentTime || time}</p>
-        </div>
-      );
-
-
+    function getTimeZone(cityCountry: string): string|undefined {
+    const timeZoneObj =
+    timeZones.find(tz => JSON.stringify(tz).toLowerCase().includes(cityCountry.toLowerCase()));
+    return timeZoneObj?.name;
 }
 
+export const Clock: React.FC<Props> = ({time, cityCountry}) => {
+    const timeZone: string|undefined = useMemo(() => getTimeZone(cityCountry),[cityCountry]);
+    const [title, setTitle] = useState<string>((timeZone && cityCountry) || 'Israel');
+    const [timeStr, setTimeStr] = useState<string>(time.toLocaleTimeString(undefined,
+     {timeZone})) 
+
+
+    function handleInputSubmit (inputText: string): InputResult {
+    const inputCityCountry = inputText;
+    const zones = getTimeZone(inputText);
+    let newTitle = inputCityCountry;
+    let newTimeStr = time.toLocaleTimeString(undefined,
+        {timeZone: zones}) 
+       if (!zones) {
+        newTitle = 'Israel';
+         }
+          setTitle(newTitle!);
+          setTimeStr(newTimeStr);
+        
+       return { status: "success", message: inputText };
+     };
+     
+    return <div style={style}>
+            <header>
+                Time in {title}
+            </header>
+            <p>{timeStr}</p>
+
+
+            <Input
+            submitFn={handleInputSubmit}
+            type="text"
+            placeholder="enter the name of the city/country"
+            buttonTitle="Submit"
+          />
+
+
+    </div>
+}
