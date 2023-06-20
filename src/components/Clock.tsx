@@ -1,4 +1,3 @@
-
 import React, { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { timeZones } from '../config/time-zones';
 import Input from './common/Input';
@@ -28,10 +27,19 @@ export const Clock: React.FC<Props> = ({time, cityCountry}) => {
     const timeZone: string|undefined = useMemo(() => getTimeZone(cityCountry),[cityCountry]);
     const [title, setTitle] = useState<string>((timeZone && cityCountry) || 'Israel');
     const [timeStr, setTimeStr] = useState<string>(time.toLocaleTimeString(undefined,
-     {timeZone})) 
+    {timeZone}))
+  
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+          setTimeStr(new Date().toLocaleTimeString(undefined, { timeZone }));
+        }, 1000);
+    
+        return () => clearInterval(intervalId);
+      }, [timeZone]);
 
 
     function handleInputSubmit (inputText: string): InputResult {
+    let res: InputResult; 
     const inputCityCountry = inputText;
     const zones = getTimeZone(inputText);
     let newTitle = inputCityCountry;
@@ -39,11 +47,23 @@ export const Clock: React.FC<Props> = ({time, cityCountry}) => {
         {timeZone: zones}) 
        if (!zones) {
         newTitle = 'Israel';
-         }
-          setTitle(newTitle!);
-          setTimeStr(newTimeStr);
+        res = {status: "error", message: `there isn't timezone for ${inputText}, set it for ${newTitle} by default`}
+       
+    } else if (Array.isArray(zones)) {
+
+        res = {status: "warning", message: `there are several timezones for ${inputText}, set first one for ${newTitle}`}
+    } else {
+        setTitle(newTitle);
+        setTimeStr(newTimeStr);
+        res = {status: "success", message: `success for ${inputText}`}
+       
         
-       return { status: "success", message: inputText };
+    }
+   
+    return res;
+          
+        
+       
      };
      
     return <div style={style}>

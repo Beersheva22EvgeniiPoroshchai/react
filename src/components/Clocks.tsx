@@ -42,13 +42,3 @@ const Clocks:React.FC = () => {
 
 
 export default Clocks
-
-
-
-
-
-
-
-
-
-
