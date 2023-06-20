@@ -19,6 +19,9 @@ const Input: React.FC<Props> = ({submitFn, placeholder, buttonTitle, type}) => {
 function onClickFn(){
         const res = submitFn(inputElementRef.current!.value);
         status.current = res.status;
+        if (res.status === 'success') {
+            inputElementRef.current!.value = ''
+        }
         setMessage(res.message || '');
         res.message && setTimeout(() => setMessage(''), 5000);
     }

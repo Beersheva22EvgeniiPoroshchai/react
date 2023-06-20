@@ -10,12 +10,18 @@ import { timeZones } from '../config/time-zones';
 const Clocks:React.FC = () => {
     const [time, setTime] = useState<Date>(new Date())
     useEffect(() => {
+        console.log('mounting of clocks');
+        
         const intervalId = setInterval(() => {
        setTime(new Date());
+       console.log('interval');
+       
       
    }, 1000 );
-   return () => clearInterval(intervalId)
-   }, [])
+
+    return () => {console.log('unmounting of clocks');
+          clearInterval(intervalId)}
+    }, [])
 
   
 
