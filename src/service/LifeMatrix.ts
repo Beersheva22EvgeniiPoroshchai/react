@@ -39,33 +39,10 @@ export default class LifeMatrix {
 
 
 
-
-      //private countLiveNeighbours(row: number, col: number): number {
-        // const numRows = this._numbers.length;
-        // const numCols = this._numbers[0].length;
-        // let count = 0;
-      
-        // for (let i = -1; i <= 1; i++) {
-        //   for (let j = -1; j <= 1; j++) {
-        //     const neighbourRow = row + i;
-        //     const neighbourCol = col + j;
-      
-        //     const isValidNeighbour = neighbourRow >= 0 && neighbourRow < numRows &&
-        //     neighbourCol >= 0 && neighbourCol < numCols;
-            
-        //     const isCurrentCell = i === 0 && j === 0;
-      
-        //     if (isValidNeighbour && !isCurrentCell) {
-        //       count += this._numbers[neighbourRow][neighbourCol];
-        //     }
-        //   }
-        // }
-      
-        // return count;
       }
 
 
-   // }
+   
 
       function getCellFromLive (sum: number): number {
         return +(sum >=2 && sum <=3);
@@ -77,12 +54,7 @@ export default class LifeMatrix {
       }
 
 
-    // function updateLiveCell(nLives: number): number {
-    //     return (nLives === 2 || nLives === 3) ? 1 : 0;
-    // }
-    // function updateDeadCell(nLives: number): number {
-    //     return (nLives === 3) ? 1 : 0;
-    // }
+   
 
 
 

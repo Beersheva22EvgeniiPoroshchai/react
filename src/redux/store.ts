@@ -12,7 +12,6 @@ export const store = configureStore ({
     }
 })
 
-//store.dispatch;
 
 export function useSelectorDirection() {
     return useSelector<any, "row" | "column">(state => state.directionState.direction);
