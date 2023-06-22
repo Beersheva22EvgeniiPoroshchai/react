@@ -7,7 +7,7 @@ import { countActions } from "../redux/slices/lifesCountSlice";
 const Lifes: React.FC = () => {
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(countActions.setCount(4));
+        dispatch(countActions.setCount(2));
 
     }, []) 
 
