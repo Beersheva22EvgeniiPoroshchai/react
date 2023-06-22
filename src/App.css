@@ -1,0 +1,18 @@
+.component-logo {
+    text-align: center;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.active {
+    background-color: blue;
+    color: white;
+
+}
+
+.navigator-list {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+}
+
