@@ -16,3 +16,20 @@
     flex-direction: row;
 }
 
+.navigator-list {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    
+}
+
+.navigator-item {
+    margin-left: 0;
+}
+
+.navigator-item+.navigator-item {
+    margin-left: 3vw;
+    
+}
+

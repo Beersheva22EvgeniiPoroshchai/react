@@ -1,0 +1,22 @@
+{
+    "unauthorized":[
+        ["/Home","Home"],
+        ["/Products","Products"],
+        ["/SignIn","SignIn"]
+    ],
+
+
+    "authorized":[
+        ["/Home","Home"],
+        ["/Products","Products"],
+        ["/ShoppingCart","ShoppingCart"],
+        ["/SignOut","SignOut"]
+    ],
+        
+    "admin": [
+        ["/Home","Home"],
+        ["/Orders","Orders"],
+        ["/Customers","Customers"],
+        ["/SignOut","SignOut"]
+    ]
+}
