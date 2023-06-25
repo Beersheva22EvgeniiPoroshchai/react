@@ -1,8 +1,19 @@
 
-import {NavLink, Outlet} from 'react-router-dom';
+import { useEffect } from 'react';
+import {NavLink, Outlet, useLocation, useNavigate} from 'react-router-dom';
 
 const Navigator:React.FC<{navItem:string[][]}> = (nav) => {
-    
+
+    const  navigate = useNavigate();
+    const location = useLocation();
+    useEffect(() => {
+        let index = nav.navItem.findIndex(r => r[0] == location.pathname);
+        if(index < 0){
+          index = 0;
+        }
+        navigate(nav.navItem[index][0]);
+    },[nav])
+
    
     return  <div>
               <nav>

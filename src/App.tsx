@@ -14,6 +14,7 @@ import { useSelectorUserState } from "./redux/store";
 import { getMenuItem } from "./service/util/authentic";
 
 
+
 const App: React.FC = () => {
     const currentUser = useSelectorUserState()
     const [menuItems,setMenuItems] = useState<string[][]>(getMenuItem(currentUser))
@@ -32,6 +33,7 @@ const App: React.FC = () => {
                   <Route path="ShoppingCart" element = {<ShoppingCart></ShoppingCart>}/>
                   <Route path="SignIn" element = {<SignIn></SignIn>}/>
                   <Route path="SignOut" element = {<SignOut></SignOut>}/>
+                
                 </Route>
               </Routes>
             </BrowserRouter> 
