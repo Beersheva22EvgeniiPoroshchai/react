@@ -1,19 +1,27 @@
-import {createSlice} from "@reduxjs/toolkit"
+import {createSlice} from '@reduxjs/toolkit';
 
+const AUTH_ITEM = "auth-item";
 
-const initialState: {userStatus: string} = {
-    userStatus: "unauthorized"
+const initialState: {username: string} = {
+username: localStorage.getItem(AUTH_ITEM) || ''
 }
 
-const slice = createSlice({
+const authSlice = createSlice({
     initialState,
-    name:"userStatusState",
+    name: "authState",
+    
     reducers: {
-        setStatus: (state,data) => {
-            state.userStatus = data.payload as string;
+        set: (state, data) => {
+            state.username = data.payload;
+            localStorage.setItem(AUTH_ITEM, data.payload);
+        },
+        reset: (state) => {
+            state.username = '';
+            localStorage.removeItem(AUTH_ITEM);
         }
-    }
-})
 
-export const userStateAction = slice.actions;
-export const userStateReducer = slice.reducer;
+    }
+});
+
+export const authActions = authSlice.actions;
+export const authReducer = authSlice.reducer;

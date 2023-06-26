@@ -1,22 +1,9 @@
 {
-    "unauthorized":[
-        ["/Home","Home"],
-        ["/Products","Products"],
-        ["/SignIn","SignIn"]
-    ],
-
-
-    "authorized":[
-        ["/Home","Home"],
-        ["/Products","Products"],
-        ["/ShoppingCart","ShoppingCart"],
-        ["/SignOut","SignOut"]
-    ],
-        
-    "admin": [
-        ["/Home","Home"],
-        ["/Orders","Orders"],
-        ["/Customers","Customers"],
-        ["/SignOut","SignOut"]
-    ]
+    "always": [{"to": "/", "label": "Home"}],
+    "authenticated": [{"to": "/signout", "label": "Sign Out"},
+     {"to": "/products", "label": "Products"}],
+     "admin": [{"to": "/orders", "label": "Orders"},
+     {"to": "/customers", "label": "Customers"}],
+     "noadmin": [{"to": "/shoppingcart", "label": "Shopping Cart"}],
+     "noauthenticated": [{"to": "/signin", "label": "Sign In"}]
 }

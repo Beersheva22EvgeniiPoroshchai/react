@@ -1,71 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navigator, { RouteType } from "./components/navigators/Navigator";
 import Home from "./components/pages/Home";
 import Customers from "./components/pages/Customers";
-import Orders from "./components/pages/Orders";
 import Products from "./components/pages/Products";
+import Orders from "./components/pages/Orders";
 import ShoppingCart from "./components/pages/ShoppingCart";
 import SignIn from "./components/pages/SignIn";
 import SignOut from "./components/pages/SignOut";
-import Navigator from "./components/navigators/Navigator";
-import './App.css';
-import { useSelectorUserState } from "./redux/store";
-import { getMenuItem } from "./service/util/authentic";
+import './App.css'
+import { useSelectorAuth } from "./redux/store";
+import { useMemo } from "react";
+import routesConfig from './config/nav-config.json';
+import NotFound from "./components/pages/NotFound";
+const {always, authenticated, admin, noadmin, noauthenticated} = routesConfig;
 
-
+function getRoutes(username: string): RouteType[] {
+  const res: RouteType[] = [];
+  res.push(...always);
+  username && res.push(...authenticated);
+  username.startsWith('admin') && res.push(...admin);
+  !!username && !username.startsWith('admin') && res.push(...noadmin);    //convert to boolean type (in this case true)
+  !username && res.push(...noauthenticated);
+  return res;
+}
 
 const App: React.FC = () => {
-    const currentUser = useSelectorUserState()
-    const [menuItems,setMenuItems] = useState<string[][]>(getMenuItem(currentUser))
-  
-    useEffect(() => {
-      setMenuItems(getMenuItem(currentUser))
-    },[currentUser])
-   
-    return  <BrowserRouter>
-              <Routes>    
-              <Route path ='/' element = {<Navigator navItem={menuItems}></Navigator>}>
-                  <Route path="Home" element = {<Home></Home>}/>
-                  <Route path="Orders" element = {<Orders></Orders>}/>
-                  <Route path="Products" element = {<Products></Products>}/>
-                  <Route path="Customers" element = {<Customers></Customers>}/>
-                  <Route path="ShoppingCart" element = {<ShoppingCart></ShoppingCart>}/>
-                  <Route path="SignIn" element = {<SignIn></SignIn>}/>
-                  <Route path="SignOut" element = {<SignOut></SignOut>}/>
-                
-                </Route>
-              </Routes>
-            </BrowserRouter> 
-              
-           
-  }
+  const username = useSelectorAuth();
+  const routes = useMemo(() => getRoutes(username), [username])
+  return <BrowserRouter>
+  <Routes>
+    <Route path="/" element={<Navigator routes={routes}/>}>
+        <Route index element={<Home/>}/>
+        <Route path="customers" element={<Customers/>}/>
+        <Route path="products" element={<Products/>}/>
+        <Route path="orders" element={<Orders/>}/>
+        <Route path="shoppingcart" element={<ShoppingCart/>}/>
+        <Route path="signin" element={<SignIn/>}/>
+        <Route path="signout" element={<SignOut/>}/>
+        <Route path="/*" element={<NotFound/>}/>
+    </Route>
+  </Routes>
+  </BrowserRouter>
+}
 
-
-
-
-
-
-// const App: React.FC = () => {
-
-// return <BrowserRouter>
-//   <Routes>
-
-//     <Route path='/' element={<Navigator />}>
-//         <Route index element = {<Home/>} />
-//         <Route path="customers" element={<Customers/>}/>
-//         <Route path="home" element={<Home/>}/>
-//         <Route path="orders" element={<Orders/>}/>
-//         <Route path="products" element={<Products/>}/>
-//         <Route path="shoppingCart" element={<ShoppingCart/>}/>
-//         <Route path="signin" element={<SignIn/>}/>
-//         <Route path="signout" element={<SignOut/>}/>
-//     </Route>
-
-//   </Routes>
-
-//   </BrowserRouter>
-
-// }
 
 export default App;
