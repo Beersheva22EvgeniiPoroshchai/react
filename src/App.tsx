@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navigator, { RouteType } from "./components/navigators/Navigator";
+import NavigatorDispatcher from "./components/navigators/NavigatorDispatcher";
 import Home from "./components/pages/Home";
 import Customers from "./components/pages/Customers";
 import Products from "./components/pages/Products";
@@ -12,6 +12,7 @@ import { useSelectorAuth } from "./redux/store";
 import { useMemo } from "react";
 import routesConfig from './config/nav-config.json';
 import NotFound from "./components/pages/NotFound";
+import { RouteType } from "./components/navigators/Navigator";
 const {always, authenticated, admin, noadmin, noauthenticated} = routesConfig;
 
 function getRoutes(username: string): RouteType[] {
@@ -29,7 +30,7 @@ const App: React.FC = () => {
   const routes = useMemo(() => getRoutes(username), [username])
   return <BrowserRouter>
   <Routes>
-    <Route path="/" element={<Navigator routes={routes}/>}>
+    <Route path="/" element={<NavigatorDispatcher routes={routes}/>}>
         <Route index element={<Home/>}/>
         <Route path="customers" element={<Customers/>}/>
         <Route path="products" element={<Products/>}/>
