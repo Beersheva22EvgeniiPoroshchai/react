@@ -1,0 +1,11 @@
+{
+    
+    "minSalary": 7,
+    "maxSalary": 50,
+   
+    "maxYear": 2003,
+    "minYear": 1950,
+    "departments": [
+        "QA", "Audit", "Accounting", "Development", "Management"
+    ]
+}
