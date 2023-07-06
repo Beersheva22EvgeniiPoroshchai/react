@@ -26,8 +26,6 @@ const authSlice = createSlice({
                 localStorage.setItem(AUTH_ITEM, JSON.stringify(data.payload));
                 state.userData = data.payload;
             } 
-            
-            
         },
         reset: (state) => {
             state.userData = null;

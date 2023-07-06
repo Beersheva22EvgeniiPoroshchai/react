@@ -34,7 +34,7 @@ function onClickFn(){
 
     return <div>
         <TextField size ="small" type={type || 'text'} placeholder={placeholder} ref={inputElementRef}
-        onChange={onChangeFn}/>
+        onChange={onChangeFn} style={{width: "30vw"}}/>
         <Button onClick={onClickFn} disabled={disabled}>{buttonTitle || 'GO' }</Button>
         {message && <Alert severity={status.current} >{message}</Alert>}
     </div>

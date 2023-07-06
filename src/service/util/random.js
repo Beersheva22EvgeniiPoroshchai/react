@@ -23,8 +23,8 @@ export function getRandomEmployee(minSalary, maxSalary, minYear, maxYear, depart
     const salary = getRandomInt(minSalary, maxSalary) * 1000;
     const department = getRandomElement(departments);
     return {
-         name, birthYear, gender,
-        salary, department};
+         name: name, birthYear: birthYear, gender: gender,
+        salary: salary, department: department};
 }
 
 

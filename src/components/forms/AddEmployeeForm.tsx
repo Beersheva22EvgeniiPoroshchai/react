@@ -1,35 +1,41 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import employeesConfig from '../../config/employee-config.json'
 
-import {Box, Button,FormControl,FormControlLabel,FormLabel,Grid,InputLabel,MenuItem,Radio,RadioGroup,Select,TextField, Typography} from "@mui/material";
+import {Alert, Box, Button,FormControl,FormControlLabel,FormHelperText,FormLabel,Grid,InputLabel,MenuItem,Radio,RadioGroup,Select,Snackbar,TextField, Typography} from "@mui/material";
   import Employee from "../../model/Employee";
+import { StatusType } from "../../model/StatusType";
+import InputResult from "../../model/InputResult";
+import CodePayload from "../../model/CodePayload";
+import CodeType from "../../model/CodeType";
+import Genders from "../../model/Genders";
   
 
 type Props = {
-    submitFn: (empl: Employee) => void
+    submitFn: (empl: Employee, id?: any) => Promise<CodePayload|any>
+    modalClose?:(active: boolean) => void,
+    id?:any,
+    defNameValue?:string
+    defBirthDate?:Date,
+    defSalary?:number,
+    defGender?:Genders,
+    defDepartment?:string
+
 }
 
+const initialDate: any = 0;
+const initialGender: any = '';
 const initialEmployee: Employee = {
-    id: '',
-    name: '',
-    birthDate: new Date,
-    gender: 'male',
-    department: '',
-    salary: 0,
-}
+    id: 0, birthDate: initialDate, name: '',department: '', salary: 0,
+     gender: initialGender
+};
 
 
-  const AddEmployeeForm: React.FC<Props> = ({submitFn}) => {
+  const AddEmployeeForm: React.FC<Props> = ({submitFn, defNameValue, defBirthDate, defSalary, defGender, defDepartment}) => {
     const {minSalary, maxSalary, maxYear, minYear , departments} = employeesConfig;
     const [employee, setEmployee] = useState<Employee>(initialEmployee);
-
-    function setId(event: any) {
-        const id = event.target.value;
-        const instanceEmpl = {...employee};
-        instanceEmpl.id = id;
-        setEmployee(instanceEmpl);
-    }
-
+    const [errorMessage, setErrorMessage] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const severity = useRef<CodeType>();
 
 
     function setName(event: any) {
@@ -56,23 +62,32 @@ const initialEmployee: Employee = {
     }
 
     function setSalary(event: any) {
-        const salary = event.target.value;
+        const salary = +event.target.value;
         const instanceEmpl = {...employee};
         instanceEmpl.salary = salary;
         setEmployee(instanceEmpl);
     }
 
         function setGender(event: any) {
-        const gender = event.target.value;
+        setErrorMessage('');
+        const gender: 'male' | 'female' = event.target.value;
         const instanceEmpl = {...employee};
         instanceEmpl.gender = gender;
         setEmployee(instanceEmpl);
     }
 
-        function onSubmitFn(event: any) {
+        async function onSubmitFn(event: any) {
         event.preventDefault();
-        submitFn(employee);
-        document.querySelector('form')!.reset();
+        if (!employee.gender) {
+            setErrorMessage('You should mark the gender');
+        } else {
+        const res = await submitFn(employee);
+         severity.current = res.code; 
+         res.code == CodeType.OK && event.target.reset();
+         setAlertMessage(res.message!)
+        }
+        // submitFn(employee);
+        // document.querySelector('form')!.reset();
      }
 
      function onResetFn(event: any) {
@@ -96,28 +111,13 @@ const initialEmployee: Employee = {
         </Typography>
         </Grid>
 
-            <Grid item xs={8} sm={5} >
-                    <TextField type="number" required fullWidth label="ID"
-                        helperText="enter employee's id" onChange={setId}
-                        value={employee.id}/>
-                </Grid>
-
-
-                <Grid item xs={8} sm={5} >
-                    <FormControl fullWidth required>
-                        <InputLabel id="select-department-id">Department</InputLabel>
-                        <Select labelId="select-department-id" label="Department"
-                            value={employee.department} onChange={setDepartment}>
-                            <MenuItem value=''>None</MenuItem>
-                            {departments.map(dep => <MenuItem value={dep}>{dep}</MenuItem>)}
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={8} sm={5} >
+        <Grid item xs={8} sm={5} >
                     <TextField type="text" required fullWidth label="Name"
                         helperText="enter name of employee" onChange={setName}
-                        value={employee.name}/>
+                        value={defNameValue ? defNameValue : null}/>
                 </Grid>
+
+
                 <Grid item xs={8} sm={5} >
                     <TextField type="date" required fullWidth label="birthDate"
                         value={employee.birthDate} inputProps={{
@@ -128,29 +128,40 @@ const initialEmployee: Employee = {
                         }} onChange={setBirthDate} />
                 </Grid>
 
-
-                <Grid item xs={8} sm={5} >
-                    
-                <FormControl>
-      <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-controlled-radio-buttons-group"
-        name="controlled-radio-buttons-group"
-        value={employee.gender}
-        onChange={setGender}
-        
-      >
-        <FormControlLabel value="male" control={<Radio />} label="Male" />
-        <FormControlLabel value="female" control={<Radio />} label="Female" />
-     </RadioGroup>
-    </FormControl>
-                    
+                <Grid item xs={8} sm={4} md={5}>
+                    <FormControl required error={!!errorMessage}>
+                        <FormLabel id="gender-group-label">Gender</FormLabel>
+                        <RadioGroup
+                            aria-labelledby="gender-group-label"
+                            defaultValue=""
+                            value={defGender ? defGender : null}
+                            name="radio-buttons-group"
+                           row onChange={setGender}
+                        >
+                            <FormControlLabel value="female" control={<Radio />} label="Female"  />
+                            <FormControlLabel value="male" control={<Radio />} label="Male" />
+                            <FormHelperText>{errorMessage}</FormHelperText>
+                        </RadioGroup>
+                    </FormControl>
                 </Grid>
 
+    
                 <Grid item xs={8} sm={5} >
-                    <TextField label="salary" fullWidth required
-                        type="number" onChange={setSalary}
-                        value={employee.salary || ''}
+                    <FormControl fullWidth required>
+                        <InputLabel id="select-department-id">Department</InputLabel>
+                        <Select labelId="select-department-id" label="Department"
+                            defaultValue={defDepartment? defDepartment : ''} onChange={setDepartment}>
+                            <MenuItem value=''>None</MenuItem>
+                            {departments.map(dep => <MenuItem value={dep}>{dep}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                </Grid>
+
+
+                <Grid item xs={8} sm={5} >
+                    <TextField type="number" required fullWidth label="Salary"
+                        onChange={setSalary}
+                        defaultValue={defSalary? defSalary : null}
                         helperText={`enter salary size from ${minSalary*1000} to ${maxSalary*1000}`}
                         inputProps={{
                             min: `${minSalary*1000}`,
@@ -166,9 +177,8 @@ const initialEmployee: Employee = {
             <Button type="reset">Reset</Button>
 </Box>
             
-
-
         </form>
+
     </Box>
 }
 
