@@ -1,15 +1,8 @@
-import { useDispatch } from "react-redux";
-import { authActions } from "../../redux/slices/authenticSlice";
-import { Button } from "@mui/material";
-
-
+import {useDispatch} from 'react-redux';
+import { authActions } from '../../redux/slices/authSlice';
 const SignOut: React.FC = () => {
     const dispatch = useDispatch();
-   
-    return  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20vh' }}> 
-     <Button variant="contained" onClick={() => dispatch(authActions.reset())}>confirm sign out</Button>
-    </div>
+    return <button onClick={() => dispatch(authActions.reset())}>confirm sign out</button>
 }
  
  export default SignOut;
-

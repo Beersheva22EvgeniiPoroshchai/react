@@ -1,40 +1,56 @@
-import { Typography } from "@mui/material"
-import Input from "../common/Input"
+import { useDispatch } from "react-redux";
 import InputResult from "../../model/InputResult"
-import { getRandomEmployee } from "../../service/util/RandomEmployee"
-import randomConf from "../../config/employee-config.json"
-import { employeesService } from "../../config/service-config"
-import { StatusType } from "../../model/StatusType"
-import Employee from "../../model/Employee"
-
-const {minSalary, maxSalary, minYear, maxYear, departments} = randomConf;
-
+import Input from "../common/Input"
+import { employeesService } from "../../config/service-config";
+import Employee from "../../model/Employee";
+import CodePayload from "../../model/CodePayload";
+import CodeType from "../../model/CodeType";
+import { getRandomEmployee } from "../../service/util/random";
+import employeeConfig from '../../config/employee-config.json';
+import { codeActions } from "../../redux/slices/codeSlice";
+const {minSalary, maxSalary, departments, minYear, maxYear} = employeeConfig;
+const MAX_AMOUNT = 20;
 const Generation: React.FC = () => {
+    const dispatch = useDispatch();
+    function onSubmit(value: string): InputResult {
+        const amount = +value;
+        const res: InputResult = {status: 'success',
+         message: ''};
+         if (amount < 1 || amount > MAX_AMOUNT) {
+            res.status = 'error';
+            res.message = `amount must be in the range [1 - ${MAX_AMOUNT}]`;
+         }
+         generateEmployees(amount);
 
-    function submitFn (inputText: string): InputResult {
+         return res;
+    }
+    async function generateEmployees(amount: number): Promise<void> {
+        let message: string = '';
+        let code: CodeType = CodeType.OK;
+        let count: number = 0;
+        for (let i = 0; i < amount; i++) {
+            try {
+                await 
+                employeesService.addEmployee(getRandomEmployee(minSalary, maxSalary,
+                    minYear, maxYear, departments));
+                count++;
+            } catch (error: any) {
+               
     
-        let res: InputResult = {status: 'success', message: `${inputText} employees have been added`}
-        const countEmpl = Number.parseInt(inputText);
-     
-        if (countEmpl >=1 && countEmpl <= 10) {
-             for (let index = 0; index < countEmpl; index++) {
-        const randEmpl = getRandomEmployee(minSalary, maxSalary, minYear, maxYear, departments);
-           const setOfEmployees = employeesService.addEmployee(randEmpl);
-         
-        }
-        
-        } else  {
-        res= {status: 'warning', message: 'you can generate and add employees in the range from 1 to 10'}
-        }
-
-      return res;
-    } 
-
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '20vh' }}> 
-    <Input submitFn={submitFn} placeholder="enter an amount of employees" buttonTitle="Generate and add" type="number"/>
-   </div>
-   
+               if( error.includes('Authentication')) {
+                code = CodeType.AUTH_ERROR;
+                
+                
+               } 
+               message = error;
+            }
+            
+           
+         }
+         message = `added ${count} employees ` + message;
+         dispatch(codeActions.set({code, message}))
+    }
+    return <Input submitFn={onSubmit}
+     placeholder={`amount of random Employees [1 - ${MAX_AMOUNT}]`} type="number" buttonTitle="Generate" />
 }
-  
-
-export default Generation
+export default Generation;

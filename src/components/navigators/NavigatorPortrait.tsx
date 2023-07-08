@@ -1,65 +1,52 @@
-
-import { AppBar, Box, Drawer, IconButton, List, ListItem, ListItemButton, ListItemText, Toolbar, Typography } from '@mui/material';
-import { ReactNode, useEffect, useState } from 'react';
-import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
+import React, { useEffect, useState } from 'react';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Menu } from '@mui/icons-material'
+import { AppBar, IconButton, ListItem, Toolbar, Typography, Drawer, List, Box } from '@mui/material';
 import { RouteType } from './Navigator';
 
-const NavigatorPortrait: React.FC<{ routes: RouteType[] }> = ({ routes }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+const NavigatorPortrait: React.FC<{routes: RouteType[]}> = ({ routes }) => {
 
-  const [value, setValue] = useState(0);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  
-  const [currentLabel, setCurrentLabel] = useState(routes[0].label);
+    const [flOpen, setOpen] = useState<boolean>(false);
 
-  useEffect(() => {
-    let index = routes.findIndex((r) => r.to === location.pathname); // active route
-    if (index < 0) {
-      index = 0;
+    const location = useLocation();
+    const navigate = useNavigate();
+    useEffect(() => {
+        let index = routes.findIndex(r => r.to === location.pathname);
+        if (index < 0) {
+            index = 0;
+        }
+        navigate(routes[index].to);
+
+    }, [routes]);
+    function getTitle(): string {
+        const route = routes.find(r => r.to === location.pathname)
+        return route ? route.label : '';
     }
-    navigate(routes[index].to);
-    setValue(index);
-  }, [routes, location.pathname]);
 
 
-useEffect(() => {
-    setCurrentLabel(routes[value]?.label || '');
-  }, [routes, value]);
+    function toggleOpen() {
+        setOpen(!flOpen);
+    }
+    function getListItems(): React.ReactNode {
+        return routes.map(i => <ListItem onClick={toggleOpen} 
+            component={Link} to={i.to} key={i.to}>{i.label}</ListItem>)
+    }
+    return <Box sx={{ marginTop: { xs: "15vh", sm: "20vh" } }}>
+        <AppBar position="fixed">
+            <Toolbar><IconButton onClick={toggleOpen} sx={{ color: 'white' }}>
+                <Menu />
+            </IconButton>
+                <Typography sx={{ width: "100%", textAlign: "center", fontSize: "1.5em" }}>
+                    {getTitle()}
+                </Typography>
+                <Drawer open={flOpen} onClose={toggleOpen} anchor="left">
+                    <List>
+                        {getListItems()}
+                    </List>
+                </Drawer></Toolbar>
 
-
-function getLinks(): ReactNode {
-    return routes.map((r) => (
-      <ListItemButton component={NavLink} to={r.to} key={r.label} onClick={() => setDrawerOpen(false)}>
-        <ListItemText primary={r.label} />
-      </ListItemButton>
-    ));
-  }
-
-    return (
-    <Box>
-      <AppBar sx={{ backgroundColor: 'lightgray' }}> 
-        <Toolbar>
-          <IconButton edge="start" color="success" onClick={() => setDrawerOpen(true)}>
-            <MenuIcon />
-          </IconButton>
-          <Typography color="#388e3c" variant="h6" component="div" sx={{ ml: 1 }}>
-          {currentLabel}
-          </Typography>
-        </Toolbar>
-      </AppBar>
-
-      <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <List>{getLinks()}</List>
-      </Drawer>
-
-      <Toolbar/>
-      <Outlet/>
+        </AppBar>
+        <Outlet></Outlet>
     </Box>
-  );
-};
-
-
-
-export default NavigatorPortrait;
+}
+export default NavigatorPortrait

@@ -1,40 +1,34 @@
-import { Typography } from "@mui/material";
-import AddEmployeeForm from "../forms/AddEmployeeForm";
 import Employee from "../../model/Employee";
+import { EmployeeForm } from "../forms/EmployeeForm";
+import InputResult from "../../model/InputResult";
 import { authService, employeesService } from "../../config/service-config";
 import { useDispatch } from "react-redux";
-import InputResult from "../../model/InputResult";
-import { authActions } from "../../redux/slices/authenticSlice";
+
 import CodePayload from "../../model/CodePayload";
 import CodeType from "../../model/CodeType";
 import { codeActions } from "../../redux/slices/codeSlice";
 
-
-const AddEmployees: React.FC = () => {
-
+const AddEmployee: React.FC = () => {
     const dispatch = useDispatch();
-    async function submitFn(empl: Employee): Promise<CodePayload> {
-        const res: CodePayload = {code: CodeType.OK, message:''}
-    
+    const codeMessage: CodePayload = {code: CodeType.OK, message: ''};
+    async function submitFn(empl: Employee): Promise<InputResult> {
+        const res: InputResult = {status: 'success', message: ''};
         try {
             const employee: Employee = await employeesService.addEmployee(empl);
-            res.message = `employee with id: ${employee.id} has been added`
-            dispatch(codeActions.set(res))
+            codeMessage.message = `employee with id: ${employee.id} has been added`
         } catch (error: any) {
-           res.code = CodeType.AUTH_ERROR;
-           if((typeof(error) == 'string') && error.includes('Authentication')) {
-            authService.logout();
-            dispatch(authActions.reset());
-            res.message = 'Authentication error'
-            dispatch(codeActions.set(res))
-       }
-           }
+           res.status = 'error' ;
+
+           if( error.includes('Authentication')) {
+            codeMessage.code = CodeType.AUTH_ERROR;
+            codeMessage.message = ''
+            
+           } 
+           codeMessage.message = error;
+        }
+        dispatch(codeActions.set(codeMessage))
         return res;
     }
-
-    return <AddEmployeeForm submitFn={submitFn}/>
-
-
+    return <EmployeeForm submitFn={submitFn}/>
 }
-
-export default AddEmployees;
+export default AddEmployee;

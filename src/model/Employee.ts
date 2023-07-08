@@ -1,14 +1,11 @@
-import Genders from "./Genders";
-
 type Employee = {
-    id?: any;
-    name: string;
-    birthDate: Date;
-    department: string;
-    salary: number;
-    gender: Genders; 
+    id?: any,
+    birthDate: Date,
+    name: string,
+    department: string,
+    salary: number,
+    gender: 'male'|'female'
 
 
 }
-
 export default Employee;
