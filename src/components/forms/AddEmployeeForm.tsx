@@ -26,7 +26,7 @@ const initialDate: any = 0;
 const initialGender: any = '';
 const initialEmployee: Employee = {
     id: 0, birthDate: initialDate, name: '',department: '', salary: 0,
-     gender: initialGender
+    gender: initialGender
 };
 
 
