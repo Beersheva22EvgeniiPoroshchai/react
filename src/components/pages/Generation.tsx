@@ -50,7 +50,10 @@ const Generation: React.FC = () => {
          message = `added ${count} employees ` + message;
          dispatch(codeActions.set({code, message}))
     }
-    return <Input submitFn={onSubmit}
-     placeholder={`amount of random Employees [1 - ${MAX_AMOUNT}]`} type="number" buttonTitle="Generate" />
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '10vh' }}> 
+    <Input submitFn={onSubmit}
+     placeholder={`enter an amount of random employees from 1 to ${MAX_AMOUNT}]`} type="number" buttonTitle="Generate and Add" />
+     </div>
+
 }
 export default Generation;

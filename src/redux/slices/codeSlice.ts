@@ -1,6 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 import CodeType from "../../model/CodeType";
 import CodePayload from "../../model/CodePayload";
+
 const initialState: {codeMessage: CodePayload} =  {
     codeMessage: {code: CodeType.OK, message: ''}
 }

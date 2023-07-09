@@ -31,7 +31,7 @@ const Input: React.FC<Props> = ({submitFn, placeholder, buttonTitle, type}) => {
     }
     return <div>
         <TextField  size="small" fullWidth type={type || 'text'} placeholder={placeholder} ref={inputElementRef} 
-        onChange={onChangeFn}/>
+        onChange={onChangeFn}  style={{width: "35vw"}}/>
         <Button onClick={onClickFn} disabled={disabled}>{buttonTitle || 'GO' }</Button>
         {message && <Alert severity={status.current} >{message}</Alert>}
     </div>

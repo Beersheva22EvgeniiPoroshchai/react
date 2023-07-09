@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import UserData from '../../model/UserData';
 const AUTH_ITEM = "auth-item";
+
 function getUserData(): UserData {
     const userDataJson = localStorage.getItem(AUTH_ITEM) || '';
     let res: UserData = null;

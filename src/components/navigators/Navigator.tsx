@@ -16,9 +16,11 @@ const Navigator: React.FC<{ routes: RouteType[] }> = ({routes}) => {
         navigate(routes[index].to);
         setValue(index);
     }, [routes])
+
     function onChangeFn(event: any, newValue: number) {
         setValue(newValue);
     }
+
     function getTabs(): ReactNode {
         return routes.map(r => <Tab component={NavLink} to={r.to} label={r.label} key={r.label}/>)
     }
@@ -31,5 +33,6 @@ const Navigator: React.FC<{ routes: RouteType[] }> = ({routes}) => {
         <Outlet></Outlet>
     </Box>
 }
+
 export default Navigator;
 

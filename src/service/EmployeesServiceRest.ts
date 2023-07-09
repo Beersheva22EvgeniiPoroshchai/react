@@ -123,9 +123,8 @@ export default class EmployeesServiceRest implements EmployeesService {
                 
             })
             .then((data) => subscriber.next(data))
-            .catch(error => subscriber.next('Server is unavailable, repeate later on'));
+            .catch(error => subscriber.next('Server is unavailable, repeat later on'));
             
-
         } );
         return res;
         

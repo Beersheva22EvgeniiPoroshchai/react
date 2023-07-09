@@ -118,6 +118,7 @@ const Employees: React.FC = () => {
             });
         return () => subscription.unsubscribe();
     }, []);
+
     function getColumns(): GridColDef[] {
         let res: GridColDef[] = columnsCommon;
         if (userData && userData.role == 'admin') {
@@ -133,6 +134,7 @@ const Employees: React.FC = () => {
         confirmFn.current = actualRemove;
         setOpenConfirm(true);
     }
+
     async function actualRemove(isOk: boolean) {
         let code: CodeType = CodeType.OK;
         let message: string = '';
@@ -155,6 +157,7 @@ const Employees: React.FC = () => {
         dispatch(codeActions.set({ code, message }))
         setOpenConfirm(false);
     }
+    
     function updateEmployee(empl: Employee): Promise<InputResult> {
         setFlEdit(false)
         const res: InputResult = { status: 'error', message: '' };
@@ -167,6 +170,7 @@ const Employees: React.FC = () => {
         }
         return Promise.resolve(res);
     }
+    
     async function actualUpdate(isOk: boolean) {
         let code: CodeType = CodeType.OK;
         let message: string = '';
