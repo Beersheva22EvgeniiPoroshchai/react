@@ -1,82 +1,63 @@
-import { Box, Typography } from "@mui/material";
-import { DataGrid, GridColDef} from "@mui/x-data-grid";
-
-import React from "react";
+import { Box, Container, Grid, FormControl, Select, InputLabel, MenuItem, Typography } from "@mui/material";
+import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import { useRef } from "react";
+import Chart from "./common/Chart";
+export type StatisticsType = {
+    id: any;
+    min: number;
+    max: number;
+    amount: number
+}[]
 
 type Props = {
     title: string;
-    field: string;
-    objects: any[];
+    intervalOptions: number[];
+    data: StatisticsType;
+    submitFn: (interval: number) => void
+
 }
 const columns: GridColDef[] = [
-    {
-        field: "minValue", headerName: "Min", headerAlign: "center",
-        align: "center", headerClassName: "header", flex: 1
-    },
-    {
-        field: "maxValue", headerName: "Max", headerAlign: "center",
-        align: "center", headerClassName: "header", flex: 1
-    },
-    {
-        field: "employeeCount", headerName: "Amount, employees", headerAlign: "center",
-        align: "center", headerClassName: "header", flex: 1
-    },
-
-    {
-        field: "avgValue", headerName: "Avg", headerAlign: "center",
-        align: "center", headerClassName: "header", flex: 1
-    },
-
+    {field: "min", sortable: false, headerName: "Min ",type:"number",
+     headerClassName: 'data-grid-header', align: 'center', headerAlign: 'center', flex:0.5},
+    {field: "max", sortable: false, headerName: "Max ", type:"number",
+    headerClassName: 'data-grid-header', align: 'center', headerAlign: 'center', flex: 0.5},
+    {field: "amount", sortable: false, headerName: "Amount", type:"number",
+    headerClassName: 'data-grid-header', align: 'center', headerAlign: 'center', flex: 0.5}
 ]
-
-export const Statistics: React.FC<Props> = ({ title, field, objects }) => {
-    let statistics: any = { id: 1 };
-    if (objects.length > 0) {
-      const initialObject: {
-        minValue: number;
-        maxValue: number;
-        avgValue: number;
-        employeeCount: number;
-      } = {
-        minValue: objects[0][field],
-        maxValue: objects[0][field],
-        avgValue: 0,
-        employeeCount: objects.length,
-      };
-      statistics = objects.reduce(
-        (res, cur) => {
-          if (res.minValue > cur[field]) {
-            res.minValue = cur[field];
-          }
-          if (res.maxValue < cur[field]) {
-            res.maxValue = cur[field];
-          }
-          res.avgValue += cur[field];
-          return res;
-        },
-       initialObject
-      );
-      statistics.id = 1;
-      statistics.avgValue = Math.round((statistics.avgValue) / objects.length);
+const Statistics: React.FC<Props> = ({intervalOptions, submitFn, title, data}) => {
+    const intervalValue = useRef(intervalOptions[0]);
+    function handlerInterval(event: any) {
+        const value: number = +event.target.value;
+        intervalValue.current = value;
+        submitFn(value);
     }
-  
-    return (
-      <Box sx={{ width: "50vw", height: "25vh", textAlign: "center" }}>
-        <Typography
-          sx={{
-            fontSize: "1.8em",
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
-          {title}
-        </Typography>
-        <DataGrid columns={columns} rows={[statistics]} sx={{ ml: "5vw" }} />
-      </Box>
-    );
-  };
 
+  return <Container >
 
-
-
+        <Grid container justifyContent={'center'} spacing={1} >
+            
+            <Grid item xs={8}>
+            <FormControl fullWidth required>
+                        <InputLabel id="select-interval-id">Interval Value</InputLabel>
+                        <Select labelId="select-interval-id" label="Distribution"
+                             onChange={handlerInterval} value={intervalValue.current}>
+                            {intervalOptions.map(o => <MenuItem value={o} key={o}>{o}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <Box sx={{width: "100%",
+                 height: {xs: "30vh", sm: "60vh"}}}>
+                    <DataGrid columns={columns} rows={data} rowHeight={20}/>
+                </Box>
+            </Grid>
+            <Grid item xs={8} sm={6}>
+                <Box sx={{width: "80%", height: "40vh"}}>
+                    <Chart  yAxis={"Employees"}
+                     data={data.map(s => ({key: s.min, amount: s.amount}))} dataKey={"key"} />
+                </Box>
+            </Grid>
+        </Grid>
+  </Container>
+}
 export default Statistics;

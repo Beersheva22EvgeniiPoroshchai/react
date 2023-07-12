@@ -12,6 +12,7 @@ import { RouteType } from "./components/navigators/Navigator";
 import UserData from "./model/UserData";
 import Employees from "./components/pages/Employees";
 import AddEmployee from "./components/pages/AddEmployee";
+import AgeStatistics from "./components/pages/AgeStatistics";
 import SalaryStatistics from "./components/pages/SalaryStatistics";
 import { StatusType } from "./model/StatusType";
 import CodeType from "./model/CodeType";
@@ -21,7 +22,7 @@ import { authService } from "./config/service-config";
 import { Alert, Snackbar } from "@mui/material";
 import { codeActions } from "./redux/slices/codeSlice";
 import Generation from "./components/pages/Generation";
-import { AgeStatistics } from "./components/pages/AgeStatistics";
+import process from "process";
 
 const {always, authenticated, admin, noadmin, noauthenticated} = routesConfig;
 type RouteTypeOrder = RouteType & {order?: number}
@@ -31,7 +32,11 @@ function getRoutes(userData: UserData): RouteType[] {
   if(userData) {
       res.push(...authenticated);
       if (userData.role === 'admin') {
-        res.push(...admin)
+        res.push(...admin);
+        if(routesConfig.developmentAdmin &&
+          process.env.NODE_ENV != 'production') {
+            res.push(...routesConfig.developmentAdmin);
+        }
       } else {
         res.push(...noadmin)
       }
@@ -50,7 +55,6 @@ function getRoutes(userData: UserData): RouteType[] {
   }
   return res
 }
-
 const App: React.FC = () => {
   const userData = useSelectorAuth();
   const code = useSelectorCode();
@@ -58,7 +62,6 @@ const App: React.FC = () => {
 
   const [alertMessage, severity] = useMemo(() => codeProcessing(), [code]);
   const routes = useMemo(() => getRoutes(userData), [userData]);
-  
   function codeProcessing(): [string, StatusType] {
     const res: [string, StatusType] = [code.message, 'success'];
     switch (code.code) {
@@ -69,6 +72,7 @@ const App: React.FC = () => {
        dispatch(authActions.reset()); 
       authService.logout()
     }
+    
     return res;
   }
   return <BrowserRouter>
@@ -77,7 +81,8 @@ const App: React.FC = () => {
         <Route index element={<Employees/>}/>
         <Route path="employees/add" element={<AddEmployee/>}/>
         <Route path="statistics/age" element={<AgeStatistics/>}/>
-        <Route path="statistics/salary" element={<SalaryStatistics/>}/>
+        <Route path="statistics/salary" 
+        element={<SalaryStatistics/>}/>
         
         <Route path="signin" element={<SignIn/>}/>
         <Route path="signout" element={<SignOut/>}/>

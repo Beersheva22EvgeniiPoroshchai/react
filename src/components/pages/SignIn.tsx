@@ -11,6 +11,7 @@ const SignIn: React.FC = () => {
     async function submitFn(loginData: LoginData): Promise<InputResult> {
         let inputResult: InputResult = {status: 'error',
          message: "Server unavailable, repeat later on"}
+         
         try {
             const res: UserData = await authService.login(loginData);
             res && dispatch(authActions.set(res));
@@ -22,7 +23,9 @@ const SignIn: React.FC = () => {
         }
         return inputResult;
     }
-    return <SignInForm submitFn={submitFn}/>
+    return <SignInForm submitFn={submitFn}
+     networks={authService.getAvailableProvider()}
+         />
 
 }
 

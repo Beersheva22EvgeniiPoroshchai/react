@@ -1,32 +1,17 @@
-import { Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { Subscription } from "rxjs";
-import { employeesService } from "../../config/service-config";
-import Employee from "../../model/Employee";
+import {  useMemo, useState } from "react";
+import intervals from '../../config/intervals.json'
+import { getStatistics } from "../../service/EmployeesDataProcessor";
 import Statistics from "../Statistics";
-
-export const SalaryStatistics: React.FC = () => {
+import { useSelectorEmployees } from "../../components/hooks/hooks";
+const SalaryStatistics: React.FC = () => {
+    const {salaryIntervals} = intervals;
+    const employees = useSelectorEmployees();
+    const [interval, setInterval] = useState(salaryIntervals[0])
+    const statisticsData = useMemo(() => getStatistics(employees, "salary", interval),[employees, interval])
     
-    const [employees, setEmployees] = useState<Employee[]>([]);
+    return <Statistics title={"Salary Statistics"} intervalOptions={salaryIntervals} data={statisticsData} submitFn={function (intervalSelected: number): void {
+       setInterval(intervalSelected) ;
+    } } />
 
-
-    useEffect(() => {
-       const subscription: Subscription = employeesService.getEmployees().subscribe({
-         next(employeesArr:Employee[]|string) {
-             if (typeof employeesArr != 'string') {
-                  
-                 setEmployees(employeesArr)
-             }
-             }
-        })
-        return () => subscription.unsubscribe();
-     },[])
-
-
-    const employeesSalary = employees.map(empl => ({
-        salary: empl.salary
-    }))
-    return <Statistics title="Salary Statistics" field="salary" objects={employeesSalary} />
 }
-
 export default SalaryStatistics;

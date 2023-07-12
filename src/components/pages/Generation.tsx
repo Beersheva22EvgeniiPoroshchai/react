@@ -35,12 +35,9 @@ const Generation: React.FC = () => {
                     minYear, maxYear, departments));
                 count++;
             } catch (error: any) {
-               
-    
-               if( error.includes('Authentication')) {
+                  if( error.includes('Authentication')) {
                 code = CodeType.AUTH_ERROR;
-                
-                
+            
                } 
                message = error;
             }
@@ -51,9 +48,7 @@ const Generation: React.FC = () => {
          dispatch(codeActions.set({code, message}))
     }
     return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '10vh' }}> 
-    <Input submitFn={onSubmit}
-     placeholder={`enter an amount of random employees from 1 to ${MAX_AMOUNT}]`} type="number" buttonTitle="Generate and Add" />
-     </div>
-
+    <Input submitFn={onSubmit} placeholder="enter an amount of employees" buttonTitle="Generate and add" type="number"/>
+   </div>
 }
 export default Generation;

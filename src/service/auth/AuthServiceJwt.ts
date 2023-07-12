@@ -1,5 +1,5 @@
-import LoginData from "../model/LoginData";
-import UserData from "../model/UserData";
+import LoginData from "../../model/LoginData";
+import UserData from "../../model/UserData";
 import AuthService from "./AuthService";
 
 export const AUTH_DATA_JWT = 'auth-data-jwt'
@@ -20,6 +20,9 @@ export default class AuthServiceJwt implements AuthService {
 constructor(private url: string) {
     this.url = url
 }
+    getAvailableProvider(): { providerName: string; providerIconUrl: string; }[] {
+        return[];
+    }
  
     async login(loginData: LoginData): Promise<UserData> {
         const response = await fetch(this.url, {
