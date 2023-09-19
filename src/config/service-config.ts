@@ -8,7 +8,7 @@ import AuthServiceFire from "../service/auth/AuthServiceFire";
 
 
 
-export const authService: AuthService = new AuthServiceJwt('http://localhost:3500/login');
+export const authService: AuthService = new AuthServiceJwt('http://localhost:3500/users/login');
 export const employeesService: EmployeesService = new EmployeesServiceRest('localhost:3500')
 
 //export const authService: AuthService = new AuthServiceFake();
